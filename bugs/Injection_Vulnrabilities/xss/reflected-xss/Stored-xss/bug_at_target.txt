@@ -1,0 +1,13 @@
+1-Go to https://██████████/SitePages/Register.aspx and register
+2-Go to https://██████████/Profiles/My/Username/Blog/default.aspx and click Create a Post button
+3-Click Body text area and click Insert button.
+4-Click Upload File button and choose file (evil.gif)
+5-i edited evil.gif :
+			GIF89;
+			<img src=x onerror=alert(Xss)>
+6-upload evil.gif
+7-Go to https://████████/_login/default.aspx?ReturnUrl=%2f_layouts%2f15%2fauthenticate.aspx%3fsource%3d%2fConference&source=/Conference and login with this username and password:
+username: test
+password: Test
+8-Go to https://██████/Profiles/My/alobaloss/Blog/Lists/Photos/evil.gif
+9-you ll see the alert

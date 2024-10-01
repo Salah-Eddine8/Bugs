@@ -1,0 +1,10 @@
+explanation:
+-------------
+
+withdraw() function is vulnerable to reentrancy attacks because it sends ether to the caller using the call function before updating the user’s balance in the balances mapping. attacker can make a  malicious contract to exploit this by repeatedly calling the withdraw() function before the state is updated
+Exploit:
+--------
+1-malicious contract deposits some ether into the vulnerable contract.
+2-then the malicious contract calls the withdraw() function to withdraw the ether.
+3-after that instead of accepting the ether, the fallback function of the malicious contract is triggered and it calls withdraw() again and again
+4-since the balance of the malicious contract hasn’t been updated yet, it can withdraw multiple times before the state is updated, ,that means that attacker can withdraw 50 ether instead of 2 ether.

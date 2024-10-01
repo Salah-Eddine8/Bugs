@@ -1,0 +1,5 @@
+1-vist https://xxxxxx.xxxxxx.ma/login
+2-after login , go to /myShop/Product?id=1
+3-click on delete this product 
+4-intercept request , change id=victim product id
+5-you ll noctice that victim product is deleted from his store

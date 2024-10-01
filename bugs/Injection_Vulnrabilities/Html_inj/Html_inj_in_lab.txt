@@ -1,0 +1,10 @@
+1-login to https://██████████/login.php
+2-after login , go to https://██████████/Myprofile/img?d=152848548752416824
+3-click on change personal information , in username section use <h1>Hello</h1>
+4-click on submit
+5-you will receive verification email , but notice in email header : Dear Hello
+
+Impact:
+-------
+-using companie's email for phishing attacks
+-account takeover

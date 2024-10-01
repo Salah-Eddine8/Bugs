@@ -1,0 +1,9 @@
+1-go to login page in https://xxxxxx.xxxxxx.ma/login
+2-go to reset password
+3-enter your email and intercept request with burpsuite
+4-you will see something like :
+			{"email":"attacker@mail.com"}
+5-add a new json line to be like:
+			{"email":"attacker@mail.com"};
+			{"email":"victim@mail.com"}
+6-check your email , you ll  found reset password link of the victim

@@ -1,0 +1,7 @@
+1-visit https://██████████/Users/Id/comment?id=1
+2-using burpsuite , intercept request change value of id to ${{3*3}}
+3-click on do intercept response to this request
+4-you can see in results that the value of id becomes 333 i was thinking it can be a Remote Code Execution vulnerability but there is a length limit
+Impact:
+-------
+-Can read internal files such as /etc/passwd

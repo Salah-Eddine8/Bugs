@@ -1,0 +1,18 @@
+1-Go to https://www.ofppt.ma/fr/deposer-ma-candidature
+2-go to reset password function
+3-intercept request :
+							
+								
+								POST /reset_password?url=https%3A%2F%2Fofppt.ma%2Freset%2Fpasswd.html HTTP/1.1
+								Host: ofppt.ma
+								User-Agent: Mozilla/5.0 (Linux NT 10.0; x64; rv:65.0) Gecko/20100101 Firefox/65.0
+								Accept: application/json, text/javascript, */*; q=0.01
+								Accept-Language: ja,en-US;q=0.7,en;q=0.3
+								Accept-Encoding: gzip, deflate, br
+								Connection: close
+								Cookie: _gb=1571852018_18048620597634; _gid=CA0.8.25.44485178615.20587614902364; 											_ga=GA1.3.924676610.1553290937
+
+4-i used ngrok to expose my local http sever to the internet through secure chanel.
+5-after doing the changes and clicking on send request , go to your http server you ll see a request is coming from ofppt.ma to my own server
+6-i made a python script that will scan internal network for open ports and print out response in http respond 
+
