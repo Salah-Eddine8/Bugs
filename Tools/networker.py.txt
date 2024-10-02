@@ -1,0 +1,111 @@
+from scapy.all import *
+import time
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import collections
+
+arp_table = {}
+alert_log = []
+loop_detected = False
+
+# this function sends email for admin
+def send_email(subject, body, email_from, email_to, smtp_server, smtp_port, smtp_user, smtp_pass):
+    msg = MIMEMultipart()
+    msg['From'] = email_from
+    msg['To'] = email_to
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+    
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(smtp_user, smtp_pass)
+        server.sendmail(email_from, email_to, msg.as_string())
+        server.quit()
+        print(f"[+] Email sent to {email_to}")
+    except Exception as e:
+        print(f"[-] Failed to send email: {str(e)}")
+
+# used for arp spoofing detection
+def detect_arp_spoof(packet):
+    if ARP in packet and packet[ARP].op == 2:  # ARP is-is-at (response)
+        src_ip = packet[ARP].psrc
+        src_mac = packet[ARP].hwsrc
+        
+        # Check if we have seen this IP before with a different MAC
+        if src_ip in arp_table:
+            if arp_table[src_ip] != src_mac:
+                alert = f"[!] ARP Spoofing Detected: IP {src_ip} is being claimed by both {arp_table[src_ip]} and {src_mac}"
+                alert_log.append(alert)
+                print(alert)
+        else:
+            arp_table[src_ip] = src_mac
+
+# DNS spoofing detection
+def detect_dns_spoof(packet):
+    if packet.haslayer(DNSRR):  # DNS Resource Record (response)
+        dns_query = packet[DNSQR].qname.decode('utf-8')
+        dns_answer = packet[DNSRR].rdata
+        # Example: Watch for unusual IP addresses in DNS responses
+        if dns_query == "example.com" and dns_answer != "93.184.216.34":  # Valid IP of example.com
+            alert = f"[!] DNS Spoofing Detected: {dns_query} redirected to {dns_answer}"
+            alert_log.append(alert)
+            print(alert)
+
+# Network loop detection
+def detect_network_loop(packet_history):
+    global loop_detected
+    mac_addresses = [pkt[Ether].src for pkt in packet_history if Ether in pkt]
+    mac_counter = collections.Counter(mac_addresses)
+    
+    # If we see the same MAC address more than a threshold in a short time, suspect a loop
+    for mac, count in mac_counter.items():
+        if count > 10:  # Threshold for loop detection
+            alert = f"[!] Network Loop Detected: MAC {mac} seen {count} times"
+            alert_log.append(alert)
+            print(alert)
+            loop_detected = True
+
+# Packet handler for sniffing
+def packet_handler(packet):
+    # Monitor network packets
+    print(f"Packet: {packet.summary()}")
+    
+    # Detect ARP spoofing
+    detect_arp_spoof(packet)
+    
+    # Detect DNS spoofing
+    detect_dns_spoof(packet)
+
+# Main function
+def main():
+    email_to = "admin@example.com"
+    
+    # SMTP settings for email alerts
+    email_from = "your_email@example.com"
+    smtp_server = "smtp.example.com"
+    smtp_port = 587
+    smtp_user = "your_email@example.com"
+    smtp_pass = "your_password"
+    
+    print("[*] Starting network monitor...\n")
+    
+    # Sniffing network traffic
+    packet_history = sniff(prn=packet_handler, store=True, timeout=300)  # Run for 5 minutes
+    
+    # Detect network loops after the sniffing session
+    detect_network_loop(packet_history)
+    
+    # Prepare the report
+    report = "Network Monitor Report:\n\n"
+    report += "\n".join(alert_log)
+    
+    # Send the report via email
+    if alert_log:
+        send_email("Network Alerts", report, email_from, email_to, smtp_server, smtp_port, smtp_user, smtp_pass)
+    else:
+        print("[+] No issues detected during the session.")
+    
+if __name__ == "__main__":
+    main()
